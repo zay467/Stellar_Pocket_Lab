@@ -5,6 +5,7 @@ import 'package:stellar_pocket_lab/core/database/AccountDatabase.dart';
 import 'package:stellar_pocket_lab/core/services/AccountService.dart';
 import 'package:stellar_pocket_lab/core/services/StellarService.dart';
 import 'package:stellar_pocket_lab/locator.dart';
+import 'package:stellar_pocket_lab/ui/shared/colors.dart';
 
 class Network extends StatelessWidget {
   final AccountService _accountService = locator<AccountService>();
@@ -50,7 +51,7 @@ class Network extends StatelessWidget {
                         Navigator.pushNamed(context, RouteName.accountList);
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.black,
+                        primary: purple,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(50),
@@ -61,7 +62,7 @@ class Network extends StatelessWidget {
                       child: Text("MAINNET"),
                     ),
                     SizedBox(
-                      width: 2,
+                      width: 0,
                     ),
                     ElevatedButton(
                       onPressed: () {
