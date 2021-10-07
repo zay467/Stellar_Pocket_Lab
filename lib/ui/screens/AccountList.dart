@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:stellar_pocket_lab/core/services/AccountService.dart';
 import 'package:stellar_pocket_lab/core/services/StellarService.dart';
 import 'package:stellar_pocket_lab/locator.dart';
+import 'package:stellar_pocket_lab/ui/shared/mock_data.dart';
+import 'package:stellar_pocket_lab/ui/widgets/AccountCard.dart';
+import 'package:stellar_pocket_lab/ui/widgets/CreateAccountButton.dart';
 
 class AccountList extends StatefulWidget {
   @override
@@ -32,7 +35,7 @@ class _AccountListState extends State<AccountList>
             padding: EdgeInsets.symmetric(vertical: 20),
             child: Center(
               child: Text(
-                "MAINNET",
+                _accountService.tableName.toUpperCase(),
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
@@ -63,7 +66,21 @@ class _AccountListState extends State<AccountList>
             child: TabBarView(
               controller: tabController,
               children: [
-                Container(),
+                ListView.builder(
+                  padding: EdgeInsets.all(20),
+                  itemCount: mock_account.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return CreateAccountButton(
+                        accountService: _accountService,
+                      );
+                    }
+                    return AccountCard(
+                      name: mock_account[index - 1]["name"],
+                      publicKey: mock_account[index - 1]["publicKey"],
+                    );
+                  },
+                ),
                 ListView(
                   padding: EdgeInsets.all(20),
                   children: [Text("Hi")],

@@ -19,4 +19,9 @@ class StellarService {
   set net(Network type) {
     this._net = type;
   }
+
+  KeyPair generateNewKeyPair() {
+    KeyPair keyPair = KeyPair.random();
+    return keyPair;
+  }
 }

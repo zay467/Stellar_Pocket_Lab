@@ -11,7 +11,7 @@ class AccountDatabase {
   static final idNum = "_id";
   static final publicKey = "publicKey";
   static final privateKey = "privateKey";
-  static final accName = "accName";
+  static final username = "username";
   static final password = "password";
 
   AccountDatabase._privateConstructor();
@@ -36,7 +36,7 @@ class AccountDatabase {
     $idNum INTEGER PRIMARY KEY,
     $privateKey TEXT NOT NULL,
     $publicKey TEXT NOT NULL,
-    $accName TEXT NOT NULL,
+    $username TEXT NOT NULL,
     $password TEXT NOT NULL
     )
     ''');
@@ -45,7 +45,7 @@ class AccountDatabase {
     $idNum INTEGER PRIMARY KEY,
     $privateKey TEXT NOT NULL,
     $publicKey TEXT NOT NULL,
-    $accName TEXT NOT NULL,
+    $username TEXT NOT NULL,
     $password TEXT NOT NULL
     )
     ''');
