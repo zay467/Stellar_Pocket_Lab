@@ -5,6 +5,7 @@ import 'package:stellar_pocket_lab/core/services/StellarService.dart';
 GetIt locator = GetIt.instance;
 
 void setupLocator() {
+  // Services
   locator.registerLazySingleton(() => AccountService());
   locator.registerLazySingleton(() => StellarService());
 }

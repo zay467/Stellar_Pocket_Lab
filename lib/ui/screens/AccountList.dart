@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:stellar_pocket_lab/core/models/Account.dart';
 import 'package:stellar_pocket_lab/core/services/AccountService.dart';
-import 'package:stellar_pocket_lab/core/services/StellarService.dart';
 import 'package:stellar_pocket_lab/locator.dart';
-import 'package:stellar_pocket_lab/ui/shared/mock_data.dart';
+import 'package:stellar_pocket_lab/ui/shared/colors.dart';
+import 'package:stellar_pocket_lab/ui/shared/ui_helpers.dart';
 import 'package:stellar_pocket_lab/ui/widgets/AccountCard.dart';
 import 'package:stellar_pocket_lab/ui/widgets/CreateAccountButton.dart';
 
@@ -14,16 +15,41 @@ class AccountList extends StatefulWidget {
 
 class _AccountListState extends State<AccountList>
     with TickerProviderStateMixin {
-  AccountService _accountService = locator<AccountService>();
-  StellarService _stellarService = locator<StellarService>();
-
   TabController tabController;
+  AccountService _accountService = locator<AccountService>();
+  List<Account> accounts = [];
+  final importAccountKey = GlobalKey<FormState>();
+  TextEditingController privateKeyController;
+  TextEditingController usernameController;
+  TextEditingController passwordController;
+  TextEditingController confirmPasswordController;
+
+  void getAllAccounts() async {
+    List<Account> data = await _accountService.load();
+    setState(() {
+      accounts = data;
+    });
+  }
 
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
-    print(_accountService.tableName);
+    privateKeyController = TextEditingController();
+    usernameController = TextEditingController();
+    passwordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
+    getAllAccounts();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    privateKeyController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -68,22 +94,131 @@ class _AccountListState extends State<AccountList>
               children: [
                 ListView.builder(
                   padding: EdgeInsets.all(20),
-                  itemCount: mock_account.length + 1,
+                  itemCount: accounts.length + 1,
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return CreateAccountButton(
-                        accountService: _accountService,
+                        refreshData: getAllAccounts,
                       );
                     }
                     return AccountCard(
-                      name: mock_account[index - 1]["name"],
-                      publicKey: mock_account[index - 1]["publicKey"],
+                      account: accounts[index - 1],
                     );
                   },
                 ),
-                ListView(
-                  padding: EdgeInsets.all(20),
-                  children: [Text("Hi")],
+                Form(
+                  key: importAccountKey,
+                  child: ListView(
+                    padding: EdgeInsets.all(20),
+                    children: [
+                      TextFormField(
+                        controller: privateKeyController,
+                        cursorColor: Colors.black,
+                        obscureText: true,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return "Please enter private key.";
+                          }
+                          return null;
+                        },
+                        decoration: UIHelper.roundedInputDecoration(
+                            hintText: "Private Key"),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        controller: usernameController,
+                        cursorColor: Colors.black,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return "Please enter username.";
+                          } else if (input.length > 20) {
+                            return "Username is too long.";
+                          }
+                          return null;
+                        },
+                        decoration: UIHelper.roundedInputDecoration(
+                            hintText: "Username"),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        controller: passwordController,
+                        cursorColor: Colors.black,
+                        obscureText: true,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return "Please enter password";
+                          } else if (input.length < 6) {
+                            return "Minimum password length is 6.";
+                          }
+                          return null;
+                        },
+                        decoration: UIHelper.roundedInputDecoration(
+                            hintText: "Password"),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        controller: confirmPasswordController,
+                        keyboardType: TextInputType.emailAddress,
+                        cursorColor: Colors.black,
+                        obscureText: true,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return "Please confirm password.";
+                          } else if (input != passwordController.text) {
+                            return "Password doesn't match.";
+                          }
+                          return null;
+                        },
+                        decoration: UIHelper.roundedInputDecoration(
+                            hintText: "Confirm Password"),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      ElevatedButton(
+                        child: Text("Import"),
+                        style: ElevatedButton.styleFrom(
+                          primary: purple,
+                          minimumSize: Size(0, 40),
+                        ),
+                        onPressed: () async {
+                          if (importAccountKey.currentState.validate()) {
+                            try {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.green,
+                                  content: Text(
+                                    'Account Create Successful!',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              );
+                              Navigator.of(context).pop();
+                            } catch (e, s) {
+                              print(e);
+                              print(s);
+                            } finally {
+                              usernameController.text = "";
+                              passwordController.text = "";
+                              confirmPasswordController.text = "";
+                            }
+                          }
+                        },
+                      ),
+                      Text(
+                        "Your username, password and wallet's keys will be stored locally. And there is no way of recovering your account.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 10),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
