@@ -90,13 +90,31 @@ class AccountService {
     }
   }
 
-  Future<bool> checkAccount(String privateKey) async {
-    String publicKey = _stellarService.publicKeyFromPrivateKey(privateKey);
+  Future<bool> checkAccount(String publicKey) async {
     try {
       await _stellarService.loadAccountData(publicKey);
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<void> import(
+      String privateKey, String username, String password) async {
+    String publicKey = _stellarService.publicKeyFromPrivateKey(privateKey);
+    bool available = await checkAccount(publicKey);
+    if (available) {
+      String passwordHash = this.sha1Digest(password);
+      String seed = this.md5Digest(password);
+      String encryptedPrivateKey = this.aesEncrypt(seed, privateKey);
+      await AccountDatabase.instance.insert({
+        AccountDatabase.username: username,
+        AccountDatabase.password: passwordHash,
+        AccountDatabase.publicKey: publicKey,
+        AccountDatabase.privateKey: encryptedPrivateKey
+      }, this._tableName);
+    } else {
+      throw ExceptionWithMessage(message: "Invalid account.");
     }
   }
 }

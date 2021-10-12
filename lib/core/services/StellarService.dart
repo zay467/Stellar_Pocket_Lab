@@ -1,4 +1,5 @@
 import 'package:stellar_flutter_sdk/stellar_flutter_sdk.dart';
+import 'package:stellar_pocket_lab/core/custom_exception/ExceptionWithMessage.dart';
 
 class StellarService {
   StellarSDK _sdk;
@@ -34,8 +35,12 @@ class StellarService {
   }
 
   String publicKeyFromPrivateKey(String privateKey) {
-    KeyPair keyPair = KeyPair.fromSecretSeed(privateKey);
-    return keyPair.accountId;
+    try {
+      KeyPair keyPair = KeyPair.fromSecretSeed(privateKey);
+      return keyPair.accountId;
+    } catch (e) {
+      throw ExceptionWithMessage(message: "Invalid private key.");
+    }
   }
 
   Future<AccountResponse> loadAccountData(String publicKey) async {

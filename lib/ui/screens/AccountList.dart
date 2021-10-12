@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:stellar_pocket_lab/core/custom_exception/ExceptionWithMessage.dart';
 import 'package:stellar_pocket_lab/core/models/Account.dart';
 import 'package:stellar_pocket_lab/core/services/AccountService.dart';
 import 'package:stellar_pocket_lab/locator.dart';
@@ -190,20 +191,30 @@ class _AccountListState extends State<AccountList>
                         onPressed: () async {
                           if (importAccountKey.currentState.validate()) {
                             try {
+                              await _accountService.import(
+                                  privateKeyController.text,
+                                  usernameController.text,
+                                  passwordController.text);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: Colors.green,
-                                  content: Text(
-                                    'Account Create Successful!',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ),
+                                UIHelper.successfulSnackBar(
+                                    message: "Account Import Successful!"),
                               );
-                              Navigator.of(context).pop();
+                              getAllAccounts();
+                            } on ExceptionWithMessage catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                UIHelper.unsuccessfulSnackBar(
+                                    message: e.message),
+                              );
                             } catch (e, s) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                UIHelper.unsuccessfulSnackBar(
+                                    message: "Something went wrong"),
+                              );
                               print(e);
                               print(s);
                             } finally {
+                              tabController.animateTo(0);
+                              privateKeyController.text = "";
                               usernameController.text = "";
                               passwordController.text = "";
                               confirmPasswordController.text = "";

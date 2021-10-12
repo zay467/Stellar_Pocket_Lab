@@ -152,28 +152,18 @@ class _AccountCardState extends State<AccountCard> {
                               try {
                                 await _accountService.login(
                                     widget.account, passwordController.text);
-                                // Navigator.of(context).pop();
+                                Navigator.of(context).pop();
                               } on ExceptionWithMessage catch (e) {
                                 Navigator.of(context).pop();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                      e.message,
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
+                                  UIHelper.unsuccessfulSnackBar(
+                                      message: e.message),
                                 );
                               } catch (e, s) {
                                 Navigator.of(context).pop();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                      "Something went wrong.",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
+                                  UIHelper.unsuccessfulSnackBar(
+                                      message: "Something went wrong."),
                                 );
                                 print(e);
                                 print(s);

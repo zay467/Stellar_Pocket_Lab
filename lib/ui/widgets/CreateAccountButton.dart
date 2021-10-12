@@ -136,24 +136,14 @@ class _CreateAccountButtonState extends State<CreateAccountButton> {
                               widget.refreshData();
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: Colors.green,
-                                  content: Text(
-                                    'Account Create Successful!',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ),
+                                UIHelper.successfulSnackBar(
+                                    message: "Account Create Successful!"),
                               );
                             } catch (e, s) {
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: Colors.red,
-                                  content: Text(
-                                    "Something went wrong.",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ),
+                                UIHelper.unsuccessfulSnackBar(
+                                    message: "Something went wrong."),
                               );
                               print(e);
                               print(s);

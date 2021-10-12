@@ -28,4 +28,24 @@ class UIHelper {
       ),
     );
   }
+
+  static Widget successfulSnackBar({String message}) {
+    return SnackBar(
+      backgroundColor: Colors.green,
+      content: Text(
+        message,
+        style: TextStyle(fontSize: 16),
+      ),
+    );
+  }
+
+  static Widget unsuccessfulSnackBar({String message}) {
+    return SnackBar(
+      backgroundColor: Colors.red,
+      content: Text(
+        message,
+        style: TextStyle(fontSize: 16),
+      ),
+    );
+  }
 }
