@@ -1,6 +1,6 @@
 # stellar_pocket_lab
 
-Stellar Laboratory pocket edition.
+Stellar Laboratory pocket edition. Still in development and open for collabration. You can contact me from my email (it is in my profile).
 
 ## Getting Started
 
